@@ -50,223 +50,221 @@ app.use('/users', userRoutes)
 //* RECIPES DATA
 app.use('/recipes', recipeRoutes)
 
-//* RECIPES DATA END
+// // COMMENT DATA
+// // CREATE COMMENTS
+// app.post('/comment/add/:userid?', async (req, res) => {
+//   try {
+//     const { username, comment } = req.body
 
-//* COMMENT DATA
-// CREATE COMMENTS
-app.post('/comment/add/:userid?', async (req, res) => {
-  try {
-    const { username, comment } = req.body
+//     const addToDb = await db`
+//       INSERT INTO comments (username, comment)
+//       VALUES (${username}, ${comment})
+//     `
 
-    const addToDb = await db`
-      INSERT INTO comments (username, comment)
-      VALUES (${username}, ${comment})
-    `
+//     res.json({
+//       status: true,
+//       message: 'comment berhasil di tambah',
+//       data: addToDb,
+//     })
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error?.message ?? error,
+//       data: [],
+//     })
+//   }
+// })
 
-    res.json({
-      status: true,
-      message: 'comment berhasil di tambah',
-      data: addToDb,
-    })
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: error?.message ?? error,
-      data: [],
-    })
-  }
-})
+// // GET USERS
+// app.get('/comment/:id?', async (req, res) => {
+//   try {
+//     const { id } = req.params
 
-// GET USERS
-app.get('/comment/:id?', async (req, res) => {
-  try {
-    const { id } = req.params
+//     if (id) {
+//       const getSelectedComment =
+//         await db`SELECT * FROM comments WHERE id = ${id}`
 
-    if (id) {
-      const getSelectedComment =
-        await db`SELECT * FROM comments WHERE id = ${id}`
+//       res.status(200).json({
+//         status: true,
+//         message: 'Data berhasil di ambil',
+//         data: getSelectedComment,
+//       })
+//     } else {
+//       const getAllComment = await db`SELECT * FROM commentS`
 
-      res.status(200).json({
-        status: true,
-        message: 'Data berhasil di ambil',
-        data: getSelectedComment,
-      })
-    } else {
-      const getAllComment = await db`SELECT * FROM commentS`
+//       res.status(200).json({
+//         status: true,
+//         message: 'Data berhasil di ambil',
+//         data: getAllComment,
+//       })
+//     }
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: 'data gagal di ambil',
+//       data: [],
+//     })
+//   }
+// })
 
-      res.status(200).json({
-        status: true,
-        message: 'Data berhasil di ambil',
-        data: getAllComment,
-      })
-    }
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: 'data gagal di ambil',
-      data: [],
-    })
-  }
-})
+// // CHANGE COMMENTS
+// app.patch('/comment/edit/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params
+//     const { comment } = req.body
 
-// CHANGE COMMENTS
-app.patch('/comment/edit/:id', async (req, res) => {
-  try {
-    const { id } = req.params
-    const { comment } = req.body
+//     const getComment = await db`SELECT * FROM comments WHERE id = ${id}`
 
-    const getComment = await db`SELECT * FROM comments WHERE id = ${id}`
+//     if (getComment) {
+//       await db`
+//         UPDATE comments SET
+//         "comment" = ${comment || getComment[0]?.comment}
+//       WHERE "id" = ${id};
+//       `
+//     }
 
-    if (getComment) {
-      await db`
-        UPDATE comments SET
-        "comment" = ${comment || getComment[0]?.comment}
-      WHERE "id" = ${id};
-      `
-    }
+//     res.json({
+//       status: true,
+//       message: 'Comment Berhasil di ubah',
+//     })
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error?.message ?? error,
+//       data: [],
+//     })
+//   }
+// })
 
-    res.json({
-      status: true,
-      message: 'Comment Berhasil di ubah',
-    })
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: error?.message ?? error,
-      data: [],
-    })
-  }
-})
+// // DELETE
+// app.delete('/comment/delete/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params
 
-// DELETE
-app.delete('/comment/delete/:id', async (req, res) => {
-  try {
-    const { id } = req.params
+//     await db`DELETE FROM "public"."comments" WHERE "id" = ${id}`
 
-    await db`DELETE FROM "public"."comments" WHERE "id" = ${id}`
+//     res.json({
+//       status: true,
+//       message: 'comment Berhasil di hapus',
+//     })
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error?.message ?? error,
+//       data: [],
+//     })
+//   }
+// })
+// //* COMMENTS DATA END
 
-    res.json({
-      status: true,
-      message: 'comment Berhasil di hapus',
-    })
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: error?.message ?? error,
-      data: [],
-    })
-  }
-})
-//* COMMENTS DATA END
+// //* VIDEO RECIPES DATA
+// // CREATE COMMENTS
+// app.post('/video/add', async (req, res) => {
+//   try {
+//     const { video } = req.body
 
-//* VIDEO RECIPES DATA
-// CREATE COMMENTS
-app.post('/video/add', async (req, res) => {
-  try {
-    const { video } = req.body
+//     const addToDb = await db`
+//       INSERT INTO video_recipes (video)
+//       VALUES (${video})
+//     `
 
-    const addToDb = await db`
-      INSERT INTO video_recipes (video)
-      VALUES (${video})
-    `
+//     res.json({
+//       status: true,
+//       message: 'video berhasil di tambah',
+//       data: addToDb,
+//     })
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error?.message ?? error,
+//       data: [],
+//     })
+//   }
+// })
 
-    res.json({
-      status: true,
-      message: 'video berhasil di tambah',
-      data: addToDb,
-    })
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: error?.message ?? error,
-      data: [],
-    })
-  }
-})
+// // GET VIDEOS
+// app.get('/video/:id?', async (req, res) => {
+//   try {
+//     const { id } = req.params
 
-// GET VIDEOS
-app.get('/video/:id?', async (req, res) => {
-  try {
-    const { id } = req.params
+//     if (id) {
+//       const getSelectedVideo =
+//         await db`SELECT * FROM video_recipes WHERE id = ${id}`
 
-    if (id) {
-      const getSelectedVideo =
-        await db`SELECT * FROM video_recipes WHERE id = ${id}`
+//       res.status(200).json({
+//         status: true,
+//         message: 'Data berhasil di ambil',
+//         data: getSelectedVideo,
+//       })
+//     } else {
+//       const getAllVideo = await db`SELECT * FROM video_recipes`
 
-      res.status(200).json({
-        status: true,
-        message: 'Data berhasil di ambil',
-        data: getSelectedVideo,
-      })
-    } else {
-      const getAllVideo = await db`SELECT * FROM video_recipes`
+//       res.status(200).json({
+//         status: true,
+//         message: 'Data berhasil di ambil',
+//         data: getAllVideo,
+//       })
+//     }
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: 'data gagal di ambil',
+//       data: [],
+//     })
+//   }
+// })
 
-      res.status(200).json({
-        status: true,
-        message: 'Data berhasil di ambil',
-        data: getAllVideo,
-      })
-    }
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: 'data gagal di ambil',
-      data: [],
-    })
-  }
-})
+// // CHANGE VIDEOS
+// app.patch('/video/edit/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params
+//     const { video } = req.body
 
-// CHANGE VIDEOS
-app.patch('/video/edit/:id', async (req, res) => {
-  try {
-    const { id } = req.params
-    const { video } = req.body
+//     const getVideo = await db`SELECT * FROM video_recipes WHERE id = ${id}`
 
-    const getVideo = await db`SELECT * FROM video_recipes WHERE id = ${id}`
+//     if (getVideo) {
+//       await db`
+//         UPDATE video_recipes SET
+//         "video" = ${video || getVideo[0]?.video}
+//       WHERE "id" = ${id};
+//       `
+//     }
 
-    if (getVideo) {
-      await db`
-        UPDATE video_recipes SET
-        "video" = ${video || getVideo[0]?.video}
-      WHERE "id" = ${id};
-      `
-    }
+//     res.json({
+//       status: true,
+//       message: 'Video Berhasil di ubah',
+//     })
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error?.message ?? error,
+//       data: [],
+//     })
+//   }
+// })
 
-    res.json({
-      status: true,
-      message: 'Video Berhasil di ubah',
-    })
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: error?.message ?? error,
-      data: [],
-    })
-  }
-})
+// // DELETE
+// app.delete('/video/delete/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params
 
-// DELETE
-app.delete('/video/delete/:id', async (req, res) => {
-  try {
-    const { id } = req.params
+//     await db`DELETE FROM "public"."video_recipes" WHERE "id" = ${id}`
 
-    await db`DELETE FROM "public"."video_recipes" WHERE "id" = ${id}`
+//     res.json({
+//       status: true,
+//       message: 'video recipes Berhasil di hapus',
+//     })
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error?.message ?? error,
+//       data: [],
+//     })
+//   }
+// })
+// //* VIDEO RECIPES DATA END
 
-    res.json({
-      status: true,
-      message: 'video recipes Berhasil di hapus',
-    })
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: error?.message ?? error,
-      data: [],
-    })
-  }
-})
-//* VIDEO RECIPES DATA END
-
-// menjalankan express pada port variable diatas
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+// // menjalankan express pada port variable diatas
+// app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}`)
+// })

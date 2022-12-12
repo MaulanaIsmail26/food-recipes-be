@@ -39,7 +39,33 @@ const signUpValidation = (req, res, next) => {
   })
 }
 
-// Update Users
+// Get Users
+const GetUserValidation = (req, res, next) => {
+  extend('checkId', async ({ value }) => {
+    const getId = await db`SELECT id FROM users WHERE id = ${value}`
+    if (getId.length > 0) {
+      return true
+    }
+    return false
+  })
+
+  const rules = new Validator(req.query, {
+    id: 'checkId',
+  })
+
+  rules.check().then(function (success) {
+    if (success) {
+      next()
+    } else {
+      res.status(400).json({
+        status: true,
+        message: `User dengan id tersebut tidak ada`,
+      })
+    }
+  })
+}
+
+// Update Users 
 const updateValidation = (req, res, next) => {
   // extend('pijar', ({ value }) => {
   //   if (value != 'pijar') {
@@ -105,7 +131,7 @@ const changePwValidation = (req, res, next) => {
 // Delete Users
 const deleteUserValidation = (req, res, next) => {
   extend('checkId', async ({ value }) => {
-    const getId = await db`SELECT * FROM users WHERE id = ${value}`
+    const getId = await db`SELECT id FROM users WHERE id = ${value}`
     if (getId.length > 0) {
       return true
     }
@@ -313,6 +339,7 @@ const deleteRecipesValidation = (req, res, next) => {
 
 module.exports = {
   signUpValidation,
+  GetUserValidation,
   updateValidation,
   changePwValidation,
   deleteUserValidation,
