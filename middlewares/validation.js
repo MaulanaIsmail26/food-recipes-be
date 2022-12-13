@@ -65,7 +65,7 @@ const GetUserValidation = (req, res, next) => {
   })
 }
 
-// Update Users 
+// Update Users
 const updateValidation = (req, res, next) => {
   // extend('pijar', ({ value }) => {
   //   if (value != 'pijar') {

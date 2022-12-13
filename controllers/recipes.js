@@ -150,7 +150,7 @@ const sortRecipeTitle = async (req, res) => {
   }
 }
 
-// Sort recipes by date 
+// Sort recipes by date
 const sortRecipesDate = async (req, res) => {
   try {
     const { sort, limit, page } = req.query

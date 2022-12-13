@@ -19,7 +19,7 @@ app.use(bodyParser.json())
 // use helmet
 app.use(helmet())
 
-// user xss clean
+// use xss clean
 app.use(xss())
 
 // cors for everyone
@@ -264,7 +264,7 @@ app.use('/recipes', recipeRoutes)
 // })
 // //* VIDEO RECIPES DATA END
 
-// // menjalankan express pada port variable diatas
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`)
-// })
+// menjalankan express pada port variable diatas
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})

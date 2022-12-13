@@ -110,7 +110,7 @@ const updateUsers = async (req, res) => {
   }
 }
 
-// Change users password 
+// Change users password
 const changePassword = async (req, res) => {
   try {
     const { id } = req.params
