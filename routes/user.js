@@ -6,7 +6,6 @@ const {
   changePwValidation,
   deleteUserValidation,
 } = require('../middlewares/validation') //import from middlewarres/validation.js
-const users = require('../models/users')
 const userController = require('../controllers/users')
 
 // CREAT (SIGN UP)

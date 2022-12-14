@@ -1,5 +1,4 @@
 const router = require('express').Router()
-const db = require('../db') // import dari file ./db.js
 const {
   recipesValidation,
   sortTitleValidation,
@@ -7,7 +6,6 @@ const {
   updateRecipesValidation,
   deleteRecipesValidation,
 } = require('../middlewares/validation') //import from middlewarres/validation.js
-const recipe = require('../models/recipes')
 const recipesController = require('../controllers/recipes')
 
 // CREATE RECIPES

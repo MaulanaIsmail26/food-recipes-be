@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon food_recipes.js"
+    "start": "nodemon food_recipes.js",
+    "check": "npx standard",
+    "fix": "npx standard --fix"
   },
   "author": "",
   "license": "ISC",
