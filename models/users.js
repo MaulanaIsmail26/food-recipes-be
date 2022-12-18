@@ -35,10 +35,10 @@ const checkEmail = async (params) => {
 
 // Creat users
 const creatUsers = async (params) => {
-  const { name, email, password, phone } = params
+  const { name, email, password, phone, photo } = params
   return await db`
-      INSERT INTO users (name, email, password, phone)
-      VALUES (${name}, ${email}, ${password}, ${phone})
+      INSERT INTO users (name, email, password, phone, photo)
+      VALUES (${name}, ${email}, ${password}, ${phone}, ${photo})
     `
 }
 

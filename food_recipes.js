@@ -5,6 +5,8 @@ const cors = require('cors')
 const helmet = require('helmet')
 const xss = require('xss-clean')
 const router = require('./routes/user')
+const fileUpload = require('express-fileupload')
+const path = require('path')
 const port = 3000
 
 const userRoutes = require('./routes/user') // import from routes/user.js
@@ -43,6 +45,18 @@ app.use(cors())
 //     credentials: true,
 //   })
 // )
+
+//* UPLOAD PHOTO
+// File Upload image
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: '/tmp/',
+  })
+)
+
+//akses public
+app.use('/images', express.static(path.join(__dirname, 'public')));
 
 //* USERS ACCOUNT DATA
 app.use('/users', userRoutes)

@@ -1,25 +1,70 @@
 const users = require('../models/users')
+const { v4: uuidv4 } = require('uuid')
+const path = require('path')
+const helper = require('../helper')
+require('dotenv').config()
 
 // Create Users account
 const postUsers = async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body
+    const { name, email, password, phone, photo } = req.body
 
     const checkDuplicateName = await users.checkName({ name })
     const checkDuplicateEmail = await users.checkEmail({ email })
 
     if (checkDuplicateName.length > 0) {
-      throw { code: 400, message: 'Name sudah digunakan' }
+      throw { code: 400, message: 'Name is already in use' }
     } else if (checkDuplicateEmail.length > 0) {
-      throw { code: 400, message: 'Email sudah digunakan' }
+      throw { code: 400, message: 'E-mail is already in use' }
     }
 
-    await users.creatUsers({ name, email, password, phone })
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    let file = req.files.photo
+    let fileName = `${uuidv4()}-${file.name}`
+    let uploadPath = `${path.dirname(require.main.filename)}/public/users_profile/${fileName}`
+    let mimeType = file.mimetype.split('/')[1]
+    let allowFile = ['jpeg', 'jpg', 'png', 'webp']
 
-    res.json({
-      status: true,
-      message: 'User Berhasil di tambah',
-    })
+    // validate size image
+    if (file.size > 1048576) {
+      throw 'File is too large, maximum 1 mb'
+    }
+
+    if (allowFile.find((item) => item === mimeType)) {
+      // Use the mv() method to place the file somewhere on your server
+      file.mv(uploadPath, async function (err) {
+        // await sharp(file).jpeg({ quality: 20 }).toFile(uploadPath)
+
+        if (err) {
+          throw 'Upload photo failed'
+        }
+
+        // bcrypt.hash(password, saltRounds, async (err, hash) => {
+        //   if (err) {
+        //     throw 'Proses authentikasi gagal, silahkan coba lagi'
+        //   }
+
+          // Store hash in your password DB.
+          const addToDb = await users.creatUsers({
+            name,
+            email,
+            password,
+            phone,
+            photo: `${process.env.APP_URL}/images/${fileName}`,
+          })
+
+          res.json({
+            status: true,
+            message: 'Register successful',
+            data: addToDb,
+            // path: uploadPath,
+          })
+        // })
+      })
+    } else {
+      throw 'Photo upload failed, only accept photo format'
+    }
   } catch (error) {
     res.status(error?.code ?? 500).json({
       status: false,
@@ -94,13 +139,52 @@ const updateUsers = async (req, res) => {
     const getUser = await users.getUserId({ id })
 
     if (getUser) {
-      await users.updateUsers({ id, name, email, phone, photo })
+      // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+      let file = req.files.photo
+      let fileName = `${uuidv4()}-${file.name}`
+      let uploadPath = `${path.dirname(require.main.filename)}/public/users_profile/${fileName}`
+      let mimeType = file.mimetype.split('/')[1]
+      let allowFile = ['jpeg', 'jpg', 'png', 'webp']
+  
+      // validate size image
+      if (file.size > 1048576) {
+        throw 'File is too large, maximum 1 mb'
+      }
+  
+      if (allowFile.find((item) => item === mimeType)) {
+        // Use the mv() method to place the file somewhere on your server
+        file.mv(uploadPath, async function (err) {
+          // await sharp(file).jpeg({ quality: 20 }).toFile(uploadPath)
+  
+          if (err) {
+            throw 'Upload photo failed'
+          }
+  
+          // bcrypt.hash(password, saltRounds, async (err, hash) => {
+          //   if (err) {
+          //     throw 'Proses authentikasi gagal, silahkan coba lagi'
+          //   }
+  
+          // Store hash in your password DB.
+          await users.updateUsers({
+            id,
+            name,
+            email,
+            phone,
+            photo: `${process.env.APP_URL}/images/${fileName}`,
+          })
+  
+          res.json({
+            status: true,
+            message: 'Data Successfully changed',
+            // path: uploadPath,
+          })
+          // })
+        })
+      } else {
+        throw 'Photo upload failed, only accept photo format'
+      }
     }
-
-    res.json({
-      status: true,
-      message: 'Data Berhasil di ubah',
-    })
   } catch (error) {
     res.status(500).json({
       status: false,

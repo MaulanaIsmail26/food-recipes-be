@@ -178,8 +178,7 @@ const recipesValidation = (req, res, next) => {
     'title.maxLength': 'Maximum title must be less than 70 letters',
     'ingredients.required': 'ingredients is required',
     'ingredients.minLength': 'ingredients must be more than 3 number',
-    'picture.required': 'picture is required',
-    'picture.url': 'Must contain a valid URL',
+    // 'picture.required': 'picture is required',
     'video.required': 'video is required',
     'video.url': 'Must contain a valid URL',
   })
@@ -188,7 +187,7 @@ const recipesValidation = (req, res, next) => {
     username: 'required|minLength:5|maxLength:35',
     title: 'required|minLength:3|maxLength:70',
     ingredients: 'required|minLength:3',
-    picture: 'required|url',
+    // picture: 'required',
     video: 'required|url',
   })
 
@@ -283,14 +282,14 @@ const updateRecipesValidation = (req, res, next) => {
     'title.minLength': 'title must be more than 3 letters',
     'title.maxLength': 'Maximum title must be less than 70 letters',
     'ingredients.minLength': 'ingredients must be more than 3 number',
-    'picture.url': 'Must contain a valid URL',
+    // 'picture.url': 'Must contain a valid URL',
     'video.url': 'Must contain a valid URL',
   })
 
   const rules = new Validator(req.body, {
     title: 'minLength:3|maxLength:70',
     ingredients: 'minLength:3',
-    picture: 'url',
+    // picture: 'url',
     video: 'url',
   })
 
