@@ -19,7 +19,6 @@ const postUsers = async (req, res) => {
     }
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     let file = req.files.photo
     let fileName = `${uuidv4()}-${file.name}`
     let uploadPath = `${path.dirname(require.main.filename)}/public/users_profile/${fileName}`
