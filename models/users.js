@@ -20,7 +20,7 @@ const getAllUser = async () => {
   return await db`SELECT * FROM users`
 }
 
-//* CREAT (SIGN UP USERS) 
+//* CREAT (SIGN UP USERS)
 // Check Duplicate Name
 const checkName = async (params) => {
   const { name } = params
@@ -30,7 +30,7 @@ const checkName = async (params) => {
 // Check Duplicate Email
 const checkEmail = async (params) => {
   const { email } = params
-  return await db`SELECT email FROM users WHERE email = ${email}`
+  return await db`SELECT * FROM users WHERE email = ${email}`
 }
 
 // Creat users

@@ -10,6 +10,7 @@ const path = require('path')
 const port = 3000
 
 const userRoutes = require('./routes/user') // import from routes/user.js
+const authRoutes = require('./routes/auth')
 const recipeRoutes = require('./routes/recipe') // import from routes/recipe.js
 
 // parse application/x-www-form-urlencoded
@@ -56,10 +57,13 @@ app.use(
 )
 
 //akses public
-app.use('/images', express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'public')))
 
 //* USERS ACCOUNT DATA
 app.use('/users', userRoutes)
+
+//* LOGIN
+app.use('/auth', authRoutes)
 
 //* RECIPES DATA
 app.use('/recipes', recipeRoutes)

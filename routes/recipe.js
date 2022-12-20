@@ -6,10 +6,16 @@ const {
   updateRecipesValidation,
   deleteRecipesValidation,
 } = require('../middlewares/validation') //import from middlewarres/validation.js
+const { validationToken } = require('../middlewares/webtoken')
 const recipesController = require('../controllers/recipes')
 
 // CREATE RECIPES
-router.post('/add', recipesValidation, recipesController.creatRecipe)
+router.post(
+  '/add',
+  validationToken,
+  recipesValidation,
+  recipesController.creatRecipe
+)
 
 // GET RECIPES
 router.get('/get', recipesController.getRecipes)
@@ -25,9 +31,19 @@ router.get(
 router.get('/sort/date', sortDateValidation, recipesController.sortRecipesDate)
 
 // UPDATE
-router.patch('/edit/:id', updateRecipesValidation, recipesController.updateRecipes)
+router.patch(
+  '/edit/:id',
+  validationToken,
+  updateRecipesValidation,
+  recipesController.updateRecipes
+)
 
 // DELETE
-router.delete('/delete', deleteRecipesValidation, recipesController.deleteRecipes)
+router.delete(
+  '/delete',
+  validationToken,
+  deleteRecipesValidation,
+  recipesController.deleteRecipes
+)
 
 module.exports = router // export to food_recipes.js

@@ -3,6 +3,8 @@ const { v4: uuidv4 } = require('uuid')
 const path = require('path')
 const helper = require('../helper')
 require('dotenv').config()
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
 // Create Users account
 const postUsers = async (req, res) => {
@@ -39,16 +41,16 @@ const postUsers = async (req, res) => {
           throw 'Upload photo failed'
         }
 
-        // bcrypt.hash(password, saltRounds, async (err, hash) => {
-        //   if (err) {
-        //     throw 'Proses authentikasi gagal, silahkan coba lagi'
-        //   }
+        bcrypt.hash(password, saltRounds, async (err, hash) => {
+          if (err) {
+            throw 'Authentication process failed, please try again'
+          }
 
           // Store hash in your password DB.
           const addToDb = await users.creatUsers({
             name,
             email,
-            password,
+            password: hash,
             phone,
             photo: `${process.env.APP_URL}/images/${fileName}`,
           })
@@ -59,7 +61,7 @@ const postUsers = async (req, res) => {
             data: addToDb,
             // path: uploadPath,
           })
-        // })
+        })
       })
     } else {
       throw 'Photo upload failed, only accept photo format'

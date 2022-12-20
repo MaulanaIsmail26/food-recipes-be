@@ -159,6 +159,33 @@ const deleteUserValidation = (req, res, next) => {
   })
 }
 
+//* LOGIN
+// Validation Login
+const validationLogin = (req, res, next) => {
+  addCustomMessages({
+    'email.required': 'Email is required',
+    'email.email': 'Email must contain a valid email',
+    'phone.required': 'Phone number is required',
+    'password.required': 'Password is required',
+  })
+
+  const rules = new Validator(req.body, {
+    email: 'required|email',
+    password: 'required|alphaNumeric',
+  })
+
+  rules.check().then(function (success) {
+    if (success) {
+      next()
+    } else {
+      res.status(500).json({
+        status: false,
+        message: rules.errors,
+      })
+    }
+  })
+}
+
 //* RECIPES DATA
 // Create Recipes
 const recipesValidation = (req, res, next) => {
@@ -342,6 +369,7 @@ module.exports = {
   updateValidation,
   changePwValidation,
   deleteUserValidation,
+  validationLogin,
   recipesValidation,
   sortTitleValidation,
   sortDateValidation,
