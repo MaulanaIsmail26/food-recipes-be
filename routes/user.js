@@ -8,12 +8,19 @@ const {
 } = require('../middlewares/validation') //import from middlewarres/validation.js
 const { validationToken } = require('../middlewares/webtoken')
 const userController = require('../controllers/users')
+const { useRedis } = require('../middlewares/redis')
 
 // CREAT (SIGN UP)
 router.post('/add', signUpValidation, userController.postUsers)
 
 // GET USERS
-router.get('/get', validationToken, GetUserValidation, userController.getUsers)
+router.get(
+  '/get',
+  validationToken,
+  useRedis,
+  GetUserValidation,
+  userController.getUsers
+)
 
 // UPDATE (CHANGE USERS DATA)
 router.patch(

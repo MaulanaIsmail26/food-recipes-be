@@ -3,6 +3,8 @@ const { v4: uuidv4 } = require('uuid')
 const path = require('path')
 const helper = require('../helper')
 require('dotenv').config()
+const { connect } = require('../middlewares/redis')
+const { cloudinary } = require('../helper')
 
 // create recipes
 const creatRecipe = async (req, res) => {
@@ -11,8 +13,8 @@ const creatRecipe = async (req, res) => {
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     let file = req.files.picture
-    let fileName = `${uuidv4()}-${file.name}`
-    let uploadPath = `${path.dirname(require.main.filename)}/public/picture_recipes/${fileName}`
+    // let fileName = `${uuidv4()}-${file.name}`
+    // let uploadPath = `${path.dirname(require.main.filename)}/public/picture_recipes/${fileName}`
     let mimeType = file.mimetype.split('/')[1]
     let allowFile = ['jpeg', 'jpg', 'png', 'webp']
 
@@ -22,36 +24,30 @@ const creatRecipe = async (req, res) => {
     }
 
     if (allowFile.find((item) => item === mimeType)) {
-      // Use the mv() method to place the file somewhere on your server
-      file.mv(uploadPath, async function (err) {
-        // await sharp(file).jpeg({ quality: 20 }).toFile(uploadPath)
+      cloudinary.v2.uploader.upload(
+        file.tempFilePath,
+        { public_id: uuidv4() },
+        async function (error, result) {
+          if (error) {
+            throw 'Upload picture failed'
+          }
+          // Store hash in your password DB.
+          const addToDb = await recipe.creatRecipe({
+            username,
+            title,
+            ingredients,
+            picture: result.url,
+            video,
+          })
 
-        if (err) {
-          throw 'Upload picture failed'
+          res.json({
+            status: true,
+            message: 'Recipe add successfully',
+            data: addToDb,
+            // path: uploadPath,
+          })
         }
-
-        // bcrypt.hash(password, saltRounds, async (err, hash) => {
-        //   if (err) {
-        //     throw 'Proses authentikasi gagal, silahkan coba lagi'
-        //   }
-
-        // Store hash in your password DB.
-        const addToDb = await recipe.creatRecipe({
-          username,
-          title,
-          ingredients,
-          picture: `${process.env.APP_URL}/images/${fileName}`,
-          video,
-        })
-
-        res.json({
-          status: true,
-          message: 'Recipe add successfully',
-          data: addToDb,
-          // path: uploadPath,
-        })
-        // })
-      })
+      )
     } else {
       throw 'picture upload failed, only accept picture format'
     }
@@ -284,8 +280,10 @@ const updateRecipes = async (req, res) => {
     if (getRecipes) {
       // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
       let file = req.files.picture
-      let fileName = `${uuidv4()}-${file.name}`
-      let uploadPath = `${path.dirname(require.main.filename)}/public/picture_recipes/${fileName}`
+      // let fileName = `${uuidv4()}-${file.name}`
+      // let uploadPath = `${path.dirname(
+      //   require.main.filename
+      // )}/public/picture_recipes/${fileName}`
       let mimeType = file.mimetype.split('/')[1]
       let allowFile = ['jpeg', 'jpg', 'png', 'webp']
 
@@ -295,25 +293,21 @@ const updateRecipes = async (req, res) => {
       }
 
       if (allowFile.find((item) => item === mimeType)) {
-        // Use the mv() method to place the file somewhere on your server
-        file.mv(uploadPath, async function (err) {
-          // await sharp(file).jpeg({ quality: 20 }).toFile(uploadPath)
 
-          if (err) {
-            throw 'Upload picture failed'
-          }
-
-          // bcrypt.hash(password, saltRounds, async (err, hash) => {
-          //   if (err) {
-          //     throw 'Proses authentikasi gagal, silahkan coba lagi'
-          //   }
+        cloudinary.v2.uploader.upload(
+          file.tempFilePath,
+          { public_id: uuidv4() },
+          async function (error, result) {
+            if (error) {
+              throw 'Upload picture failed'
+            }
 
           // Store hash in your password DB.
           await recipe.updateRecipes({
             id,
             title,
             ingredients,
-            picture: `${process.env.APP_URL}/images/${fileName}`,
+            picture: result.url,
             video,
           })
 
@@ -322,8 +316,8 @@ const updateRecipes = async (req, res) => {
             message: 'Resep Berhasil di ubah',
             // path: uploadPath,
           })
-          // })
-        })
+          }
+        )
       } else {
         throw 'picture upload failed, only accept picture format'
       }

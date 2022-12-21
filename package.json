@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon food_recipes.js",
+    "start": "node food_recipes.js",
     "check": "npx standard",
     "fix": "npx standard --fix"
   },
@@ -14,11 +14,13 @@
   "dependencies": {
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
+    "cloudinary": "^1.33.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
     "helmet": "^6.0.1",
+    "ioredis": "^5.2.4",
     "jsonwebtoken": "^8.5.1",
     "node-input-validator": "^4.5.1",
     "nodemon": "^2.0.20",

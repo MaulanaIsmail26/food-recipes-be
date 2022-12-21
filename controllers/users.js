@@ -5,6 +5,8 @@ const helper = require('../helper')
 require('dotenv').config()
 const bcrypt = require('bcrypt')
 const saltRounds = 10
+const { connect } = require('../middlewares/redis')
+const { cloudinary } = require('../helper')
 
 // Create Users account
 const postUsers = async (req, res) => {
@@ -22,8 +24,10 @@ const postUsers = async (req, res) => {
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     let file = req.files.photo
-    let fileName = `${uuidv4()}-${file.name}`
-    let uploadPath = `${path.dirname(require.main.filename)}/public/users_profile/${fileName}`
+    // let fileName = `${uuidv4()}-${file.name}`
+    // let uploadPath = `${path.dirname(
+    //   require.main.filename
+    // )}/public/users_profile/${fileName}`
     let mimeType = file.mimetype.split('/')[1]
     let allowFile = ['jpeg', 'jpg', 'png', 'webp']
 
@@ -33,36 +37,37 @@ const postUsers = async (req, res) => {
     }
 
     if (allowFile.find((item) => item === mimeType)) {
-      // Use the mv() method to place the file somewhere on your server
-      file.mv(uploadPath, async function (err) {
-        // await sharp(file).jpeg({ quality: 20 }).toFile(uploadPath)
-
-        if (err) {
-          throw 'Upload photo failed'
-        }
-
-        bcrypt.hash(password, saltRounds, async (err, hash) => {
-          if (err) {
-            throw 'Authentication process failed, please try again'
+      cloudinary.v2.uploader.upload(
+        file.tempFilePath,
+        { public_id: uuidv4() },
+        function (error, result) {
+          if (error) {
+            throw 'Upload photo failed'
           }
 
-          // Store hash in your password DB.
-          const addToDb = await users.creatUsers({
-            name,
-            email,
-            password: hash,
-            phone,
-            photo: `${process.env.APP_URL}/images/${fileName}`,
-          })
+          bcrypt.hash(password, saltRounds, async (err, hash) => {
+            if (err) {
+              throw 'Authentication process failed, please try again'
+            }
 
-          res.json({
-            status: true,
-            message: 'Register successful',
-            data: addToDb,
-            // path: uploadPath,
+            // Store hash in your password DB.
+            const addToDb = await users.creatUsers({
+              name,
+              email,
+              password: hash,
+              phone,
+              photo: result.url,
+            })
+
+            res.json({
+              status: true,
+              message: 'Register successful',
+              data: addToDb,
+              // path: uploadPath,
+            })
           })
-        })
-      })
+        }
+      )
     } else {
       throw 'Photo upload failed, only accept photo format'
     }
@@ -83,6 +88,10 @@ const getUsers = async (req, res) => {
     if (id) {
       const getSelectedUser = await users.getUserId({ id })
 
+      connect.set('url', req.originalUrl, 'ex', 10) // string only
+      connect.set('data', JSON.stringify(getSelectedUser), 'ex', 10) // use redis (simpan data kedalam redis)
+      connect.set('is_id', 'true', 'ex', 10)
+
       res.status(200).json({
         status: true,
         message: 'Data berhasil di ambil',
@@ -91,11 +100,18 @@ const getUsers = async (req, res) => {
     } else if (limit || page) {
       const getAllUser = await users.getUserPagination({ limit, page }) // PAGINATION
 
+      connect.set('url', req.originalUrl, 'ex', 10) // string only
+      connect.set('data', JSON.stringify(getAllUser), 'ex', 10) // use redis (simpan data kedalam redis)
+      connect.set('count', getAllUser?.length, 'ex', 10)
+      connect.set('page', page, 'ex', 10)
+      connect.set('limit', limit, 'ex', 10)
+      connect.set('is_paginate', 'true', 'ex', 10)
+
       if (getAllUser.length > 0) {
         res.status(200).json({
           status: true,
           message: 'Data berhasil di ambil',
-          count: getAllUser.length,
+          count: getAllUser?.length,
           page: parseInt(page),
           limit: parseInt(limit),
           data: getAllUser,
@@ -109,10 +125,15 @@ const getUsers = async (req, res) => {
     } else {
       const getAllUser = await users.getAllUser()
 
+      connect.set('url', req.originalUrl, 'ex', 10) // string only
+      connect.set('data', JSON.stringify(getAllUser), 'ex', 10) // use redis (simpan data kedalam redis)
+      connect.set('count', getAllUser?.length, 'ex', 10)
+      connect.set('is_paginate', null, 'ex', 10)
+
       res.status(200).json({
         status: true,
         message: 'Data berhasil di ambil',
-        count: getAllUser.length,
+        count: getAllUser?.length,
         data: getAllUser,
       })
     }
@@ -142,46 +163,42 @@ const updateUsers = async (req, res) => {
     if (getUser) {
       // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
       let file = req.files.photo
-      let fileName = `${uuidv4()}-${file.name}`
-      let uploadPath = `${path.dirname(require.main.filename)}/public/users_profile/${fileName}`
+      // let fileName = `${uuidv4()}-${file.name}`
+      // let uploadPath = `${path.dirname(
+      //   require.main.filename
+      // )}/public/users_profile/${fileName}`
       let mimeType = file.mimetype.split('/')[1]
       let allowFile = ['jpeg', 'jpg', 'png', 'webp']
-  
+
       // validate size image
       if (file.size > 1048576) {
         throw 'File is too large, maximum 1 mb'
       }
-  
+
       if (allowFile.find((item) => item === mimeType)) {
-        // Use the mv() method to place the file somewhere on your server
-        file.mv(uploadPath, async function (err) {
-          // await sharp(file).jpeg({ quality: 20 }).toFile(uploadPath)
-  
-          if (err) {
-            throw 'Upload photo failed'
+        cloudinary.v2.uploader.upload(
+          file.tempFilePath,
+          { public_id: uuidv4() },
+          async function (error, result) {
+            if (error) {
+              throw 'Upload photo failed'
+            }
+            
+            // Store hash in your password DB.
+              await users.updateUsers({
+                id,
+                name,
+                email,
+                phone,
+                photo: result.url,
+              })
+
+            res.json({
+              status: true,
+              message: 'Data Successfully changed',
+            })
           }
-  
-          // bcrypt.hash(password, saltRounds, async (err, hash) => {
-          //   if (err) {
-          //     throw 'Proses authentikasi gagal, silahkan coba lagi'
-          //   }
-  
-          // Store hash in your password DB.
-          await users.updateUsers({
-            id,
-            name,
-            email,
-            phone,
-            photo: `${process.env.APP_URL}/images/${fileName}`,
-          })
-  
-          res.json({
-            status: true,
-            message: 'Data Successfully changed',
-            // path: uploadPath,
-          })
-          // })
-        })
+        )
       } else {
         throw 'Photo upload failed, only accept photo format'
       }
