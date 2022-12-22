@@ -8,6 +8,10 @@ const {
 } = require('../middlewares/validation') //import from middlewarres/validation.js
 const { validationToken } = require('../middlewares/webtoken')
 const recipesController = require('../controllers/recipes')
+const {
+  RedisGetRecipe,
+  RedisRecipesSortTitle,
+} = require('../middlewares/redis')
 
 // CREATE RECIPES
 router.post(
@@ -18,11 +22,12 @@ router.post(
 )
 
 // GET RECIPES
-router.get('/get', recipesController.getRecipes)
+router.get('/get', RedisGetRecipe, recipesController.getRecipes)
 
-// SORT RECIPES BY TITLE (ascending or descending) 
+// SORT RECIPES BY TITLE (ascending or descending)
 router.get(
   '/sort/title',
+  RedisRecipesSortTitle,
   sortTitleValidation,
   recipesController.sortRecipeTitle
 )

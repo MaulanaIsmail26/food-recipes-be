@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node food_recipes.js",
+    "dev": "nodemon food_recipes.js",
     "check": "npx standard",
     "fix": "npx standard --fix"
   },

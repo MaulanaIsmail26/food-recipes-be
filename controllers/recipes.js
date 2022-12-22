@@ -68,6 +68,10 @@ const getRecipes = async (req, res) => {
     if (search) {
       const getSelectedRecipes = await recipe.searchRecipe({ search })
 
+      connect.set('url', req.originalUrl, 'ex', 10) // string only
+      connect.set('data', JSON.stringify(getSelectedRecipes), 'ex', 10) // use redis (simpan data kedalam redis)
+      connect.set('is_all_recipes', null, 'ex', 10)
+
       if (getSelectedRecipes.length > 0) {
         res.status(200).json({
           status: true,
@@ -83,10 +87,15 @@ const getRecipes = async (req, res) => {
     } else {
       const getAllRecipes = await recipe.getAllRecipes()
 
+      connect.set('url', req.originalUrl, 'ex', 10) // string only
+      connect.set('data', JSON.stringify(getAllRecipes), 'ex', 10) // use redis (simpan data kedalam redis)
+      connect.set('count', getAllRecipes?.length, 'ex', 10)
+      connect.set('is_all_recipes', 'true', 'ex', 10)
+
       res.status(200).json({
         status: true,
         message: 'Resep berhasil di ambil',
-        count: getAllRecipes.length,
+        count: getAllRecipes?.length,
         data: getAllRecipes,
       })
     }
@@ -112,12 +121,19 @@ const sortRecipeTitle = async (req, res) => {
           page,
         })
 
+        connect.set('url', req.originalUrl, 'ex', 10) // string only
+        connect.set('data', JSON.stringify(getRecipesSortDescending), 'ex', 10) // use redis (simpan data kedalam redis)
+        connect.set('count', getRecipesSortDescending?.length, 'ex', 10)
+        connect.set('page', page, 'ex', 10)
+        connect.set('limit', limit, 'ex', 10)
+        connect.set('is_paginate1', 'true', 'ex', 10)
+
         if (getRecipesSortDescending.length > 0) {
           res.status(200).json({
             status: true,
             page: parseInt(page),
             limit: parseInt(limit),
-            count: getRecipesSortDescending.length,
+            count: getRecipesSortDescending?.length,
             message:
               'Recipes berhasil di urutkan berdasarakan title secara descending',
             data: getRecipesSortDescending,
@@ -132,9 +148,14 @@ const sortRecipeTitle = async (req, res) => {
       } else {
         const getRecipesSortDescending = await recipe.sortRecipedbyDesc()
 
+        connect.set('url', req.originalUrl, 'ex', 10) // string only
+        connect.set('data', JSON.stringify(getRecipesSortDescending), 'ex', 10) // use redis (simpan data kedalam redis)
+        connect.set('count', getRecipesSortDescending?.length, 'ex', 10)
+        connect.set('is_all_recipes', 'true', 'ex', 10)
+
         res.status(200).json({
           status: true,
-          count: getRecipesSortDescending.length,
+          count: getRecipesSortDescending?.length,
           message:
             'Recipes berhasil di urutkan berdasarakan title secara descending',
           data: getRecipesSortDescending,
@@ -145,6 +166,13 @@ const sortRecipeTitle = async (req, res) => {
         limit,
         page,
       })
+
+      connect.set('url', req.originalUrl, 'ex', 10) // string only
+      connect.set('data', JSON.stringify(getRecipesSortAscending), 'ex', 10) // use redis (simpan data kedalam redis)
+      connect.set('count', getRecipesSortAscending?.length, 'ex', 10)
+      connect.set('page', page, 'ex', 10)
+      connect.set('limit', limit, 'ex', 10)
+      connect.set('is_paginate2', 'true', 'ex', 10)
 
       if (getRecipesSortAscending.length > 0) {
         res.status(200).json({
@@ -165,6 +193,11 @@ const sortRecipeTitle = async (req, res) => {
       }
     } else {
       const getRecipesSortAscending = await recipe.sortRecipedbyAsc()
+
+      connect.set('url', req.originalUrl, 'ex', 10) // string only
+      connect.set('data', JSON.stringify(getRecipesSortAscending), 'ex', 10) // use redis (simpan data kedalam redis)
+      connect.set('count', getRecipesSortAscending?.length, 'ex', 10)
+      connect.set('is_all_recipes', null, 'ex', 10)
 
       res.status(200).json({
         status: true,
