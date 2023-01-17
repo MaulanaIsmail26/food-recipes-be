@@ -197,9 +197,6 @@ const recipesValidation = (req, res, next) => {
   // })
 
   addCustomMessages({
-    'username.required': 'username is required',
-    'username.minLength': 'username must be more than 5 letters ',
-    'username.maxLength': 'Maximum username must be less than 35 letters',
     'title.required': 'title is required',
     'title.minLength': 'title must be more than 3 letters',
     'title.maxLength': 'Maximum title must be less than 70 letters',
@@ -211,7 +208,6 @@ const recipesValidation = (req, res, next) => {
   })
 
   const rules = new Validator(req.body, {
-    username: 'required|minLength:5|maxLength:35',
     title: 'required|minLength:3|maxLength:70',
     ingredients: 'required|minLength:3',
     // picture: 'required',
@@ -229,6 +225,31 @@ const recipesValidation = (req, res, next) => {
     }
   })
 }
+
+// const searchRecipeById = (req, res, next) => {
+//   extend('checkId', async ({ value }) => {
+//     const getId = await db`SELECT id FROM recipes WHERE id = ${value}`
+//     if (getId.length > 0) {
+//       return true
+//     }
+//     return false
+//   })
+
+//   const rules = new Validator(req.query, {
+//     id: 'checkId',
+//   })
+
+//   rules.check().then(function (success) {
+//     if (success) {
+//       next()
+//     } else {
+//       res.status(400).json({
+//         status: true,
+//         message: `User dengan id tersebut tidak ada`,
+//       })
+//     }
+//   })
+// }
 
 // Sort Title Recipes
 const sortTitleValidation = (req, res, next) => {
@@ -375,4 +396,5 @@ module.exports = {
   sortDateValidation,
   updateRecipesValidation,
   deleteRecipesValidation,
+  // searchRecipeById,
 } // export to routes/user.js

@@ -36,6 +36,7 @@ const login = async (req, res) => {
             message: 'login successful',
             data: {
               token,
+              profile: checkEmail[0]
             }
           })
         } else {

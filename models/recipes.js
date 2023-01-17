@@ -3,10 +3,10 @@ const db = require('../db') // import dari file ./db.js
 //* CREAT RECIPES
 // creat recipe
 const creatRecipe = async (params) => {
-  const { username, title, ingredients, picture, video } = params
+  const { title, ingredients, picture, video } = params
   return await db`
-      INSERT INTO recipes (username, title, ingredients, picture, video)
-      VALUES (${username}, ${title}, ${ingredients}, ${picture}, ${video})
+      INSERT INTO recipes (title, ingredients, picture, video)
+      VALUES ( ${title}, ${ingredients}, ${picture}, ${video})
     `
 }
 
@@ -17,12 +17,18 @@ const searchRecipe = async (params) => {
   return await db`SELECT * FROM recipes WHERE title LIKE ${'%' + search + '%'}`
 }
 
+// // search recipe by id
+// const searchRecipeById = async (params) => {
+//   const { id } = params
+//   return await db`SELECT * FROM recipes WHERE slug = ${id}`
+// }
+
 // Get All recipes
 const getAllRecipes = async () => {
   return await db`SELECT * FROM recipes`
 }
 
-//* SORT RECIPES BY TITLE (ascending or descending) 
+//* SORT RECIPES BY TITLE (ascending or descending)
 // sort title descending and pagination
 const getRecipedbyDesc = async (params) => {
   const { limit, page } = params
@@ -123,4 +129,5 @@ module.exports = {
   getRecipesById,
   updateRecipes,
   deleteRecipes,
+  // searchRecipeById,
 }

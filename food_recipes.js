@@ -7,7 +7,7 @@ const xss = require('xss-clean')
 const router = require('./routes/user')
 const fileUpload = require('express-fileupload')
 const path = require('path')
-const port = 3000
+const port = 8080
 
 const userRoutes = require('./routes/user') // import from routes/user.js
 const authRoutes = require('./routes/auth')
@@ -67,6 +67,14 @@ app.use('/auth', authRoutes)
 
 //* RECIPES DATA
 app.use('/recipes', recipeRoutes)
+
+//* RECIPES DATA
+app.get('/', (req, res) => {
+  res.json({
+    status: true,
+    message: "App Running Well",
+  })
+})
 
 // // COMMENT DATA
 // // CREATE COMMENTS

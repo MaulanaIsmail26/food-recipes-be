@@ -24,6 +24,8 @@ router.post(
 // GET RECIPES
 router.get('/get', RedisGetRecipe, recipesController.getRecipes)
 
+// router.get('/get/:id', RedisGetRecipe, recipesController.searchRecipeById)
+
 // SORT RECIPES BY TITLE (ascending or descending)
 router.get(
   '/sort/title',

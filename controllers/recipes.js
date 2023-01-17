@@ -9,7 +9,7 @@ const { cloudinary } = require('../helper')
 // create recipes
 const creatRecipe = async (req, res) => {
   try {
-    const { username, title, ingredients, picture, video } = req.body
+    const { title, ingredients, picture, video } = req.body
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     let file = req.files.picture
@@ -33,7 +33,6 @@ const creatRecipe = async (req, res) => {
           }
           // Store hash in your password DB.
           const addToDb = await recipe.creatRecipe({
-            username,
             title,
             ingredients,
             picture: result.url,
@@ -107,6 +106,32 @@ const getRecipes = async (req, res) => {
     })
   }
 }
+
+// const searchRecipeById = async (req, res) => {
+//   try {
+//     const { id } = req.query
+
+//     if (id) {
+//       const getSelectedUser = await recipe.searchRecipeById({ id })
+
+//       connect.set('url', req.originalUrl, 'ex', 10) // string only
+//       connect.set('data', JSON.stringify(getSelectedUser), 'ex', 10) // use redis (simpan data kedalam redis)
+//       connect.set('is_id', 'true', 'ex', 10)
+
+//       res.status(200).json({
+//         status: true,
+//         message: 'Data berhasil di ambil',
+//         data: getSelectedUser,
+//       })
+//     }
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: 'data gagal di ambil',
+//       data: [],
+//     })
+//   }
+// }
 
 // Sort recipe by title
 const sortRecipeTitle = async (req, res) => {
@@ -389,4 +414,5 @@ module.exports = {
   sortRecipesDate,
   updateRecipes,
   deleteRecipes,
+  // searchRecipeById,
 }
