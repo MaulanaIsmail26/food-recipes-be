@@ -192,11 +192,14 @@ const sortRecipeTitle = async (req, res) => {
         page,
       })
 
+      const sortRecipedbyAsc = await recipe.sortRecipedbyAsc()
+
       connect.set('url', req.originalUrl, 'ex', 10) // string only
       connect.set('data', JSON.stringify(getRecipesSortAscending), 'ex', 10) // use redis (simpan data kedalam redis)
       connect.set('count', getRecipesSortAscending?.length, 'ex', 10)
       connect.set('page', page, 'ex', 10)
       connect.set('limit', limit, 'ex', 10)
+      connect.set('total', sortRecipedbyAsc?.length, 'ex', 10)
       connect.set('is_paginate2', 'true', 'ex', 10)
 
       if (getRecipesSortAscending.length > 0) {
@@ -207,6 +210,7 @@ const sortRecipeTitle = async (req, res) => {
           count: getRecipesSortAscending.length,
           message:
             'Recipes berhasil di urutkan berdasarakan title secara ascending',
+          total: sortRecipedbyAsc.length,
           data: getRecipesSortAscending,
         })
       } else {

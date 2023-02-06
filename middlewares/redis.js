@@ -103,6 +103,7 @@ const RedisRecipesSortTitle = async (req, res, next) => {
     const count = await connect.get('count')
     const page = await connect.get('page')
     const limit = await connect.get('limit')
+    const total = await connect.get('total')
     const url = await connect.get('url')
     const urlMatch = url === req.originalUrl
 
@@ -136,6 +137,7 @@ const RedisRecipesSortTitle = async (req, res, next) => {
           count: parseInt(count),
           message:
             'Recipes berhasil di urutkan berdasarakan title secara ascending',
+          total: parseInt(total),
           data: JSON.parse(data),
         })
       } else {

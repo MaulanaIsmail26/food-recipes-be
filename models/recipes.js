@@ -14,7 +14,7 @@ const creatRecipe = async (params) => {
 // search recipe by name
 const searchRecipe = async (params) => {
   const { search } = params
-  return await db`SELECT * FROM recipes WHERE title LIKE ${'%' + search + '%'}`
+  return await db`SELECT * FROM recipes WHERE title ILIKE ${'%' + search + '%'}`
 }
 
 // // search recipe by id
