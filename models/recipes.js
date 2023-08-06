@@ -3,10 +3,10 @@ const db = require('../db') // import dari file ./db.js
 //* CREAT RECIPES
 // creat recipe
 const creatRecipe = async (params) => {
-  const { title, ingredients, picture, video } = params
+  const { title, ingredients, picture, video, username } = params
   return await db`
-      INSERT INTO recipes (title, ingredients, picture, video)
-      VALUES ( ${title}, ${ingredients}, ${picture}, ${video})
+      INSERT INTO recipes (title, ingredients, picture, video, username)
+      VALUES ( ${title}, ${ingredients}, ${picture}, ${video}, ${username})
     `
 }
 

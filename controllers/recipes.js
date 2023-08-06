@@ -9,7 +9,7 @@ const { cloudinary } = require('../helper')
 // create recipes
 const creatRecipe = async (req, res) => {
   try {
-    const { title, ingredients, picture, video } = req.body
+    const { username, title, ingredients, picture, video } = req.body
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     let file = req.files.picture
@@ -37,6 +37,7 @@ const creatRecipe = async (req, res) => {
             ingredients,
             picture: result.url,
             video,
+            username,
           })
 
           res.json({
